@@ -29,19 +29,19 @@ async def run_cmd(
 ) -> CommandResult:
     """Simple asynchronous command shell command execution.
 
-    Parameters:
-    cmd: The shell command to run
-    cwd: the working directory where the shell command is executed (defaults to
-         the current working directory)
-    raise_on_err: raises a ``RuntimeError`` if the shell command returns with an
-                  exit code not equal to 0
-    timeout: an optional timeout in seconds or a ``timedelta``. The shell
-             command is terminated if it takes longer than the timeout. Defaults
-             to no timeout.
-    logger: an optional logging class for debug logging
+    Args:
+        cmd: The shell command to run
+        cwd: the working directory where the shell command is executed (defaults to
+            the current working directory)
+        raise_on_err: raises a ``RuntimeError`` if the shell command returns with an
+            exit code not equal to 0
+        timeout: an optional timeout in seconds or a ``timedelta``. The shell
+            command is terminated if it takes longer than the timeout. Defaults
+            to no timeout.
+        logger: an optional logging class for debug logging
 
     Returns:
-    A ``CommandResult`` containing the information about the finished process.
+        A :py:class:`CommandResult` containing the information about the finished process.
     """
     if logger:
         logger.debug("running command %s", cmd)
