@@ -31,7 +31,7 @@ class Updater(ABC):
     current package version has been checked out. This function must return a
     list of filenames that were written into `destination`.
 
-    Once this function has been implemented, use py:meth:`update_package` to run
+    Once this function has been implemented, use :py:meth:`update_package` to run
     the actual update.
 
     """
@@ -68,7 +68,7 @@ class Updater(ABC):
     ):
         """Updates `source_package` by branching it (optionally into
         `target_project` instead of the default location), writing the new files
-        using py:meth:`add_files`, committing them, updating the changelog with
+        using :py:meth:`add_files`, committing them, updating the changelog with
         `commit_msg` and sending a submit request back to the original project
         (unless `submit_package` is ``False``).
 
@@ -76,21 +76,26 @@ class Updater(ABC):
         package, then no commit will be done and the branched package will be
         removed (unless `cleanup_on_no_change` is `False`).
 
-        Parameters:
-        source_package: the package which shall be updated
-        commit_msg: the commit message that will be used for the osc commit, for
-                    the changelog entry and for the submit request
-        target_project: an optional alternative project into which the package
-                        shall be branched instead of using the default in your
-                        home project
-        cleanup_on_error: if an error occurs during the update and this flag is
-                          ``True``, then the package will be removed in the Open
-                          Build Service
-        submit_package: Flag whether to send a submit request with the update
-                        (defaults to ``True``)
-        cleanup_on_no_change: Flag whether to delete the package in the Open
-                              Build Service, when no change was made (defaults
-                              to ``True``)
+        Args:
+            source_package: the package which shall be updated
+
+            commit_msg: the commit message that will be used for the osc commit, for
+                the changelog entry and for the submit request
+
+            target_project: an optional alternative project into which the
+                package shall be branched instead of using the default in your
+                home project
+
+            cleanup_on_error: if an error occurs during the update and this flag is
+                `True``, then the package will be removed in the Open
+                Build Service
+
+            submit_package: Flag whether to send a submit request with the update
+                (defaults to ``True``)
+
+            cleanup_on_no_change: Flag whether to delete the package in the Open
+                Build Service, when no change was made (defaults
+                to ``True``)
         """
         assert (
             self.osc_cli
