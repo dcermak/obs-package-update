@@ -47,10 +47,9 @@ async def test_iterator_CommandResult():
     exit_code = 42
     stderr = "errorrrrr!"
     stdout = "foobar"
-    cmd_res = CommandResult(exit_code=exit_code, stderr=stderr, stdout=stdout)
+    retval, out, err = CommandResult(exit_code=exit_code, stderr=stderr, stdout=stdout)
 
-    e, out, err = cmd_res
-    assert e == exit_code
+    assert retval == exit_code
     assert out == stdout
     assert err == stderr
 
