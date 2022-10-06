@@ -80,7 +80,7 @@ class FailNCalls(Generic[T]):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("failures", range(5))
 async def test_retry_async_cmd(failures: int):
-    bump_call_count = FailNCalls(failures)
+    bump_call_count: FailNCalls = FailNCalls(failures)
 
     await retry_async_run_cmd(bump_call_count)
 
@@ -96,7 +96,7 @@ async def test_retry_async_cmd_return():
 
 @pytest.mark.asyncio
 async def test_retry_async_cmd_logger(mocker: MockerFixture):
-    fail_once = FailNCalls(1)
+    fail_once: FailNCalls = FailNCalls(1)
 
     class StubLogger(Logger):
         def debug(self, *args, **kwargs) -> None:
