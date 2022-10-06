@@ -303,6 +303,20 @@ pytest = ">=6.1.0"
 testing = ["coverage (>=6.2)", "hypothesis (>=5.7.1)", "flaky (>=3.5.0)", "mypy (>=0.931)", "pytest-trio (>=0.7.0)"]
 
 [[package]]
+name = "pytest-mock"
+version = "3.10.0"
+description = "Thin-wrapper around the mock package for easier use with pytest"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+pytest = ">=5.0"
+
+[package.extras]
+dev = ["pre-commit", "tox", "pytest-asyncio"]
+
+[[package]]
 name = "pytz"
 version = "2022.4"
 description = "World timezone definitions, modern and historical"
@@ -483,7 +497,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "3322fda74fa4f59af060dee7bc9d817c2ada2a452f70a889fb618c633fef6309"
+content-hash = "0e93f2880bcf4b3944e68502b7318e318959ec9c939c203e1a0cf0165bb2986b"
 
 [metadata.files]
 aiofiles = [
@@ -593,6 +607,7 @@ pyparsing = [
 ]
 pytest = []
 pytest-asyncio = []
+pytest-mock = []
 pytz = []
 requests = []
 snowballstemmer = [
