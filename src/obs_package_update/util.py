@@ -11,7 +11,9 @@ class CommandResult:
     """The result of an executed command.
 
     This class also works like an iterator:
+
     >>> retcode, stdout, stderr = CommandResult(1, "foo", "err")
+
     """
 
     #: the exit code
