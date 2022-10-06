@@ -54,7 +54,7 @@ jobs:
           python-version: '3.x'
       - uses: Gr1N/setup-poetry@v7
       - run: poetry install
-      - run: poetry run sphinx-build -M html source build -W
+      - run: poetry run sphinx-build -M html source build
 
       - name: upload the build directory
         uses: actions/upload-artifact@v3
