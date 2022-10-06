@@ -25,8 +25,8 @@ class CommandResult:
     #: decoded standard error
     stderr: str
 
-    def __getitem__(self, index: int):
-        return list(self.__dict__.values())[index]
+    def __iter__(self):
+        return (self.exit_code, self.stdout, self.stderr).__iter__()
 
 
 async def run_cmd(
