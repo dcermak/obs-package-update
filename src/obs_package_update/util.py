@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Optional, Union
+from typing import Any, Callable, Coroutine, Optional, TypeVar, Union
 from datetime import timedelta
 
 from dataclasses import dataclass
@@ -69,3 +69,38 @@ async def run_cmd(
         )
 
     return CommandResult(exit_code=retcode, stdout=out, stderr=err)
+
+
+#: Return type of the coroutine passed to :py:func:`retry_async_run_cmd`
+T = TypeVar("T")
+
+
+async def retry_async_run_cmd(
+    coroutine: Callable[[], Coroutine[Any, Any, T]],
+    retries: int = 10,
+    logger: Optional[logging.Logger] = None,
+) -> T:
+    """Retry the coroutine up to ``retries`` times.
+
+    Args:
+        coroutine: An asynchronous that can throw a :py:class:`RuntimeError` on failure
+        retries: The number of times the call of ``coroutine`` should be repeated
+        logger: An optional logger, that will log all failures at debug level
+
+    Returns:
+        The returned value of `coroutine()`
+    """
+    for i in range(retries):
+        try:
+            res = await coroutine()
+            return res
+        except RuntimeError as runtime_err:
+            if logger:
+                logger.debug(
+                    "async call failed with %s, retry count: %d", runtime_err, i + 1
+                )
+            if i != retries - 1:
+                pass
+            else:
+                raise
+    assert False, "This code must be unreachable"
