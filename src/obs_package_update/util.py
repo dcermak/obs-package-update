@@ -8,7 +8,11 @@ from dataclasses import dataclass
 
 @dataclass
 class CommandResult:
-    """The result of an executed command."""
+    """The result of an executed command.
+
+    This class also works like an iterator:
+    >>> retcode, stdout, stderr = CommandResult(1, "foo", "err")
+    """
 
     #: the exit code
     exit_code: int
@@ -19,6 +23,9 @@ class CommandResult:
     #: decoded standard error
     stderr: str
 
+    def __getitem__(self, index: int):
+        return list(self.__dict__.values())[index]
+
 
 async def run_cmd(
     cmd: str,
@@ -27,7 +34,7 @@ async def run_cmd(
     timeout: Optional[Union[int, float, timedelta]] = None,
     logger: Optional[logging.Logger] = None,
 ) -> CommandResult:
-    """Simple asynchronous command shell command execution.
+    """Simple asynchronous shell command execution.
 
     Args:
         cmd: The shell command to run

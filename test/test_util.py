@@ -6,7 +6,7 @@ from typing import Generic, Optional, TypeVar
 from pytest_mock import MockerFixture
 import pytest
 from obs_package_update import run_cmd
-from obs_package_update.util import retry_async_run_cmd
+from obs_package_update.util import CommandResult, retry_async_run_cmd
 
 
 @pytest.mark.asyncio
@@ -40,6 +40,19 @@ async def test_raise_on_err():
     res = await run_cmd("false", raise_on_error=False)
 
     assert res.exit_code == 1
+
+
+@pytest.mark.asyncio
+async def test_iterator_CommandResult():
+    exit_code = 42
+    stderr = "errorrrrr!"
+    stdout = "foobar"
+    cmd_res = CommandResult(exit_code=exit_code, stderr=stderr, stdout=stdout)
+
+    e, out, err = cmd_res
+    assert e == exit_code
+    assert out == stdout
+    assert err == stderr
 
 
 T = TypeVar("T")
