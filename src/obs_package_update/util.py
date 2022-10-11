@@ -66,18 +66,51 @@ async def run_cmd(
 
     retcode = await asyncio.wait_for(proc.wait(), timeout=timeout)
     stdout, stderr = await proc.communicate()
-    if raise_on_error and retcode != 0:
-        raise RuntimeError(
-            f"Command {cmd} failed (exit code {retcode}) with: {stdout.decode()}"
-        )
     out = stdout.decode()
     err = stderr.decode()
+    if raise_on_error and retcode != 0:
+        raise RuntimeError(
+            f"Command {cmd} failed (exit code {retcode}) with stdout: '{out}', stderr: '{err}'"
+        )
     if logger:
         logger.debug(
             "command terminated with %d, stdout: %s, stderr: %s", retcode, out, err
         )
 
     return CommandResult(exit_code=retcode, stdout=out, stderr=err)
+
+
+@dataclass(frozen=True)
+class RunCommand:
+    """Helper class to run commands asynchronously with a common set of
+    parameters.
+
+    """
+
+    cwd: Optional[str] = None
+    raise_on_error: bool = True
+    timeout: Optional[Union[int, float, timedelta]] = None
+    logger: Optional[logging.Logger] = None
+
+    async def __call__(
+        self,
+        cmd: str,
+        cwd: Optional[str] = None,
+        raise_on_error: Optional[bool] = None,
+        timeout: Optional[Union[int, float, timedelta]] = None,
+        logger: Optional[logging.Logger] = None,
+    ) -> CommandResult:
+        raise_on_err = raise_on_error
+        if raise_on_error is None:
+            raise_on_err = self.raise_on_error
+        assert raise_on_err is not None
+        return await run_cmd(
+            cmd,
+            cwd or self.cwd,
+            raise_on_err,
+            timeout or self.timeout,
+            logger or self.logger,
+        )
 
 
 #: Return type of the coroutine passed to :py:func:`retry_async_run_cmd`

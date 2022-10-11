@@ -1,4 +1,5 @@
 import asyncio
+import pathlib
 from dataclasses import dataclass
 from datetime import timedelta
 from logging import Logger
@@ -6,7 +7,7 @@ from typing import Generic, Optional, TypeVar
 from pytest_mock import MockerFixture
 import pytest
 from obs_package_update import run_cmd
-from obs_package_update.util import CommandResult, retry_async_run_cmd
+from obs_package_update.util import CommandResult, RunCommand, retry_async_run_cmd
 
 
 @pytest.mark.asyncio
@@ -30,9 +31,12 @@ async def test_timeout_seconds():
 @pytest.mark.asyncio
 async def test_raise_on_err_exc():
     with pytest.raises(RuntimeError) as runtime_err_ctx:
-        await run_cmd("false", raise_on_error=True)
+        await run_cmd("sed '|afs|d'", raise_on_error=True)
 
-    assert "Command false failed (exit code 1)" in str(runtime_err_ctx.value)
+    assert (
+        "Command sed '|afs|d' failed (exit code 1) with stdout: '', stderr: 'sed: -e expression #1, char 1: unknown command: `|'"
+        in str(runtime_err_ctx.value)
+    )
 
 
 @pytest.mark.asyncio
@@ -52,6 +56,62 @@ async def test_iterator_CommandResult():
     assert retval == exit_code
     assert out == stdout
     assert err == stderr
+
+
+@pytest.mark.asyncio
+async def test_RunCommand_success():
+    caller = RunCommand()
+    res = await caller("true")
+    assert res.exit_code == 0
+    assert res.stdout == ""
+    assert res.stderr == ""
+
+
+@pytest.mark.asyncio
+async def test_RunCommand_fail():
+    with pytest.raises(RuntimeError) as runtime_err_ctx:
+        await RunCommand()("false")
+
+    assert "Command false failed (exit code 1) with stdout: '', stderr: ''" in str(
+        runtime_err_ctx
+    )
+
+
+@pytest.mark.asyncio
+async def test_RunCommand_cwd(tmp_path: pathlib.Path):
+    fname = "test-random-string-IwJLivCaJp"
+    with open(tmp_path / fname, "w") as tmp:
+        tmp.write("1")
+
+    cmd = f"cat {fname}"
+    with pytest.raises(RuntimeError):
+        await RunCommand()(cmd)
+
+    assert (await RunCommand(cwd=str(tmp_path))(cmd)).stdout.strip() == "1"
+    assert (await RunCommand()(cmd, cwd=str(tmp_path))).stdout.strip() == "1"
+    assert (await RunCommand(cwd="/")(cmd, cwd=str(tmp_path))).stdout.strip() == "1"
+
+
+@pytest.mark.asyncio
+async def test_RunCommand_raise_on_error():
+    for fut in (
+        RunCommand()("false"),
+        RunCommand(raise_on_error=True)("false"),
+        RunCommand(raise_on_error=True)("false", raise_on_error=True),
+        RunCommand(raise_on_error=False)("false", raise_on_error=True),
+        RunCommand()("false", raise_on_error=True),
+    ):
+        with pytest.raises(RuntimeError):
+            await fut
+
+    assert (await RunCommand(raise_on_error=False)("false")).exit_code == 1
+    assert (
+        await RunCommand(raise_on_error=False)("false", raise_on_error=False)
+    ).exit_code == 1
+    assert (
+        await RunCommand(raise_on_error=True)("false", raise_on_error=False)
+    ).exit_code == 1
+    assert (await RunCommand()("false", raise_on_error=False)).exit_code == 1
 
 
 T = TypeVar("T")
