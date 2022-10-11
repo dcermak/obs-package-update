@@ -80,6 +80,39 @@ async def run_cmd(
     return CommandResult(exit_code=retcode, stdout=out, stderr=err)
 
 
+@dataclass(frozen=True)
+class RunCommand:
+    """Helper class to run commands asynchronously with a common set of
+    parameters.
+
+    """
+
+    cwd: Optional[str] = None
+    raise_on_error: bool = True
+    timeout: Optional[Union[int, float, timedelta]] = None
+    logger: Optional[logging.Logger] = None
+
+    async def __call__(
+        self,
+        cmd: str,
+        cwd: Optional[str] = None,
+        raise_on_error: Optional[bool] = None,
+        timeout: Optional[Union[int, float, timedelta]] = None,
+        logger: Optional[logging.Logger] = None,
+    ) -> CommandResult:
+        raise_on_err = raise_on_error
+        if raise_on_error is None:
+            raise_on_err = self.raise_on_error
+        assert raise_on_err is not None
+        return await run_cmd(
+            cmd,
+            cwd or self.cwd,
+            raise_on_err,
+            timeout or self.timeout,
+            logger or self.logger,
+        )
+
+
 #: Return type of the coroutine passed to :py:func:`retry_async_run_cmd`
 T = TypeVar("T")
 
