@@ -66,12 +66,12 @@ async def run_cmd(
 
     retcode = await asyncio.wait_for(proc.wait(), timeout=timeout)
     stdout, stderr = await proc.communicate()
-    if raise_on_error and retcode != 0:
-        raise RuntimeError(
-            f"Command {cmd} failed (exit code {retcode}) with: {stdout.decode()}"
-        )
     out = stdout.decode()
     err = stderr.decode()
+    if raise_on_error and retcode != 0:
+        raise RuntimeError(
+            f"Command {cmd} failed (exit code {retcode}) with stdout: '{out}', stderr: '{err}'"
+        )
     if logger:
         logger.debug(
             "command terminated with %d, stdout: %s, stderr: %s", retcode, out, err

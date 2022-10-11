@@ -30,9 +30,12 @@ async def test_timeout_seconds():
 @pytest.mark.asyncio
 async def test_raise_on_err_exc():
     with pytest.raises(RuntimeError) as runtime_err_ctx:
-        await run_cmd("false", raise_on_error=True)
+        await run_cmd("sed '|afs|d'", raise_on_error=True)
 
-    assert "Command false failed (exit code 1)" in str(runtime_err_ctx.value)
+    assert (
+        "Command sed '|afs|d' failed (exit code 1) with stdout: '', stderr: 'sed: -e expression #1, char 1: unknown command: `|'"
+        in str(runtime_err_ctx.value)
+    )
 
 
 @pytest.mark.asyncio
