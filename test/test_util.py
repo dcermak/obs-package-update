@@ -34,6 +34,15 @@ async def test_timeout_seconds():
 
 
 @pytest.mark.asyncio
+async def test_env():
+    res = await run_cmd("echo $FOOBAR")
+    assert "" == res.stdout.strip()
+
+    res = await run_cmd("echo $FOOBAR", env={"FOOBAR": "value"})
+    assert "value" == res.stdout.strip()
+
+
+@pytest.mark.asyncio
 async def test_raise_on_err_exc():
     with pytest.raises(RuntimeError) as runtime_err_ctx:
         await run_cmd("sed '|afs|d'", raise_on_error=True)
@@ -126,6 +135,19 @@ async def test_RunCommand_raise_on_error():
         await RunCommand(raise_on_error=True)("false", raise_on_error=False)
     ).exit_code == 1
     assert (await RunCommand()("false", raise_on_error=False)).exit_code == 1
+
+
+@pytest.mark.asyncio
+async def test_RunCommand_env():
+    _cmd = "echo $FOOBAR"
+    _env = {"FOOBAR": "test"}
+
+    assert (await RunCommand(env=_env)(_cmd)).stdout.strip() == "test"
+    assert (await RunCommand()(_cmd, env=_env)).stdout.strip() == "test"
+    assert (
+        await RunCommand(env={"FOOBAR": "not TEST!"})(_cmd, env=_env)
+    ).stdout.strip() == "test"
+    assert (await RunCommand()(_cmd)).stdout.strip() == ""
 
 
 T = TypeVar("T")
