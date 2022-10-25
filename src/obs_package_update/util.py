@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Any, Callable, Coroutine, Optional, TypeVar, Union
+from typing import Any, Callable, Coroutine, Dict, Optional, TypeVar, Union
 from datetime import timedelta
 
 from dataclasses import dataclass
@@ -54,6 +54,7 @@ async def run_cmd(
     raise_on_error: bool = True,
     timeout: Optional[Union[int, float, timedelta]] = None,
     logger: Optional[logging.Logger] = None,
+    env: Optional[Dict[str, str]] = None,
 ) -> CommandResult:
     """Simple asynchronous shell command execution.
 
@@ -67,6 +68,9 @@ async def run_cmd(
             command is terminated if it takes longer than the timeout. Defaults
             to no timeout.
         logger: an optional logging class for debug logging
+        env: an optional environment dictionary that is set as the environment
+            for the shell command. If not provided, then the environment of the
+            current process is inherited
 
     Raises:
         :py:class:`CommandError`: on failure and if ``raise_on_err`` is ``True``
@@ -82,6 +86,7 @@ async def run_cmd(
         stderr=asyncio.subprocess.PIPE,
         stdout=asyncio.subprocess.PIPE,
         cwd=cwd,
+        env=env,
     )
     if isinstance(timeout, timedelta):
         timeout = timeout.total_seconds()
@@ -115,6 +120,7 @@ class RunCommand:
     raise_on_error: bool = True
     timeout: Optional[Union[int, float, timedelta]] = None
     logger: Optional[logging.Logger] = None
+    env: Optional[Dict[str, str]] = None
 
     async def __call__(
         self,
@@ -123,6 +129,7 @@ class RunCommand:
         raise_on_error: Optional[bool] = None,
         timeout: Optional[Union[int, float, timedelta]] = None,
         logger: Optional[logging.Logger] = None,
+        env: Optional[Dict[str, str]] = None,
     ) -> CommandResult:
         raise_on_err = raise_on_error
         if raise_on_error is None:
@@ -134,6 +141,7 @@ class RunCommand:
             raise_on_err,
             timeout or self.timeout,
             logger or self.logger,
+            env or self.env,
         )
 
 
