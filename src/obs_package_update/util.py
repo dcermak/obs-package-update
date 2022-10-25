@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Any, Callable, Coroutine, Dict, Optional, TypeVar, Union
+from typing import Any, Callable, Coroutine, Optional, TypeVar, Union
 from datetime import timedelta
 
 from dataclasses import dataclass
@@ -54,7 +54,7 @@ async def run_cmd(
     raise_on_error: bool = True,
     timeout: Optional[Union[int, float, timedelta]] = None,
     logger: Optional[logging.Logger] = None,
-    env: Optional[Dict[str, str]] = None,
+    env: Optional[dict[str, str]] = None,
 ) -> CommandResult:
     """Simple asynchronous shell command execution.
 
@@ -120,7 +120,7 @@ class RunCommand:
     raise_on_error: bool = True
     timeout: Optional[Union[int, float, timedelta]] = None
     logger: Optional[logging.Logger] = None
-    env: Optional[Dict[str, str]] = None
+    env: Optional[dict[str, str]] = None
 
     async def __call__(
         self,
@@ -129,7 +129,7 @@ class RunCommand:
         raise_on_error: Optional[bool] = None,
         timeout: Optional[Union[int, float, timedelta]] = None,
         logger: Optional[logging.Logger] = None,
-        env: Optional[Dict[str, str]] = None,
+        env: Optional[dict[str, str]] = None,
     ) -> CommandResult:
         raise_on_err = raise_on_error
         if raise_on_error is None:
