@@ -7,7 +7,12 @@ from typing import Generic, Optional, TypeVar
 from pytest_mock import MockerFixture
 import pytest
 from obs_package_update import run_cmd
-from obs_package_update.util import CommandResult, RunCommand, retry_async_run_cmd
+from obs_package_update.util import (
+    CommandError,
+    CommandResult,
+    RunCommand,
+    retry_async_run_cmd,
+)
 
 
 @pytest.mark.asyncio
@@ -36,6 +41,15 @@ async def test_raise_on_err_exc():
     assert (
         "Command sed '|afs|d' failed (exit code 1) with stdout: '', stderr: 'sed: -e expression #1, char 1: unknown command: `|'"
         in str(runtime_err_ctx.value)
+    )
+
+    assert isinstance(runtime_err_ctx.value, CommandError)
+    command_res = runtime_err_ctx.value.command_result
+    assert command_res.exit_code == 1
+    assert command_res.stdout == ""
+    assert (
+        command_res.stderr.strip()
+        == "sed: -e expression #1, char 1: unknown command: `|'"
     )
 
 

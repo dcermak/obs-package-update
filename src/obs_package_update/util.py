@@ -29,6 +29,25 @@ class CommandResult:
         return (self.exit_code, self.stdout, self.stderr).__iter__()
 
 
+class CommandError(RuntimeError):
+    """Exception class that is raised by :py:func:`run_cmd`.
+
+    It stores the result of the command in the attribute
+    :py:attr:`command_result`.
+
+    """
+
+    def __init__(self, command_result: CommandResult, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        assert (
+            command_result.exit_code != 0
+        ), f"The command must have failed but it has exit code {command_result.exit_code}."
+
+        #: The result of the failed command
+        self.command_result: CommandResult = command_result
+
+
 async def run_cmd(
     cmd: str,
     cwd: Optional[str] = None,
@@ -42,12 +61,15 @@ async def run_cmd(
         cmd: The shell command to run
         cwd: the working directory where the shell command is executed (defaults to
             the current working directory)
-        raise_on_err: raises a ``RuntimeError`` if the shell command returns with an
-            exit code not equal to 0
+        raise_on_err: raises a :py:class:`CommandError` if the shell command
+            returns with an exit code not equal to 0
         timeout: an optional timeout in seconds or a ``timedelta``. The shell
             command is terminated if it takes longer than the timeout. Defaults
             to no timeout.
         logger: an optional logging class for debug logging
+
+    Raises:
+        :py:class:`CommandError`: on failure and if ``raise_on_err`` is ``True``
 
     Returns:
         A :py:class:`CommandResult` containing the information about the finished process.
@@ -68,22 +90,24 @@ async def run_cmd(
     stdout, stderr = await proc.communicate()
     out = stdout.decode()
     err = stderr.decode()
+    command_res = CommandResult(exit_code=retcode, stdout=out, stderr=err)
     if raise_on_error and retcode != 0:
-        raise RuntimeError(
-            f"Command {cmd} failed (exit code {retcode}) with stdout: '{out}', stderr: '{err}'"
+        raise CommandError(
+            command_res,
+            f"Command {cmd} failed (exit code {retcode}) with stdout: '{out}', stderr: '{err}'",
         )
     if logger:
         logger.debug(
             "command terminated with %d, stdout: %s, stderr: %s", retcode, out, err
         )
 
-    return CommandResult(exit_code=retcode, stdout=out, stderr=err)
+    return command_res
 
 
 @dataclass(frozen=True)
 class RunCommand:
-    """Helper class to run commands asynchronously with a common set of
-    parameters.
+    """Helper class to run commands asynchronously via :py:func:`run_cmd` with a
+    common set of parameters.
 
     """
 
