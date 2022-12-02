@@ -102,6 +102,24 @@ from obs_package_update.submitrequest import (
                 description="ð: sync package with openSUSE.org:devel:BCI:SLE-15-SP4 from OBS",
             ),
         ),
+        (
+            """285603  State:review(approved) By:dancermak    When:2022-12-01T12:46:57
+        submit:          openSUSE.org:devel:BCI:SLE-15-SP5/389-ds-container@2 -> SUSE:SLE-15-SP5:Update:BCI
+        Review by Group      is accepted:  legal-auto(licensedigger)                         
+        Review by Group      is accepted:  autobuild-team(dmach)                             
+        Review by Group      is new:       sle-release-managers                              
+        Descr: 🤖: sync package with openSUSE.org:devel:BCI:SLE-15-SP5 from OBS
+""",
+            SubmitRequest(
+                id=285603,
+                state=RequestState.REVIEW,
+                source_project="openSUSE.org:devel:BCI:SLE-15-SP5",
+                source_package="389-ds-container",
+                description="🤖: sync package with openSUSE.org:devel:BCI:SLE-15-SP5 from OBS",
+                source_revision="2",
+                destination_project="SUSE:SLE-15-SP5:Update:BCI",
+            ),
+        ),
     ],
 )
 def test_from_osc_stdout(stdout: str, submit_request: SubmitRequest):
