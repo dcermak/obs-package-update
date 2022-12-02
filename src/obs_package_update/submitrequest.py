@@ -68,7 +68,14 @@ class SubmitRequest:
         lines = stdout.strip().splitlines()
         tmp = lines[0].split()
         id = int(tmp[0])
-        state = RequestState(tmp[1].split(":")[1])
+        # osc sometimes prints partially approved reviews as follows:
+        # state: review(approved)
+        # => if that happens, just take the first part, as the SR is still in
+        # review
+        state_str = tmp[1].split(":")[1]
+        if match_res := re.match(r"^(?P<state>\S+)\(\S+\)$", state_str):
+            state_str = match_res.group("state")
+        state = RequestState(state_str)
 
         submit, full_src, arrow, dest = lines[1].split()
         assert submit == "submit:" and arrow == "->", "malformed request output"
