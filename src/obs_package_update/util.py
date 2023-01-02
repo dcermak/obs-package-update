@@ -96,14 +96,14 @@ async def run_cmd(
     out = stdout.decode()
     err = stderr.decode()
     command_res = CommandResult(exit_code=retcode, stdout=out, stderr=err)
+    if logger:
+        logger.debug(
+            "command terminated with %d, stdout: %s, stderr: %s", retcode, out, err
+        )
     if raise_on_error and retcode != 0:
         raise CommandError(
             command_res,
             f"Command {cmd} failed (exit code {retcode}) with stdout: '{out}', stderr: '{err}'",
-        )
-    if logger:
-        logger.debug(
-            "command terminated with %d, stdout: %s, stderr: %s", retcode, out, err
         )
 
     return command_res
