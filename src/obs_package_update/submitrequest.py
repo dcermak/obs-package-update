@@ -77,7 +77,12 @@ class SubmitRequest:
             state_str = match_res.group("state")
         state = RequestState(state_str)
 
-        submit, full_src, arrow, dest = lines[1].split()
+        # osc changed its output around 1.0.0~b4 so that the submit: line is now
+        # in the 3rd line and the second is "Creade by: $user"
+        submit_idx = 1
+        if lines[1].split()[0] == "Created":
+            submit_idx = 2
+        submit, full_src, arrow, dest = lines[submit_idx].split()
         assert submit == "submit:" and arrow == "->", "malformed request output"
 
         # grabbing the description is a bit ugly, because it can span multiple lines:
@@ -92,13 +97,13 @@ class SubmitRequest:
         # - if the description field was seen and the line has indent +
         #   len("Descr:") leading whitespaces, then it is a continuation of the
         #   description and we append it. if not, then we quit.
-        match = re.match(r"(?P<indent>^\s+)", lines[1])
+        match = re.match(r"(?P<indent>^\s+)", lines[submit_idx])
         assert match
         indent = match.group("indent")
 
         description: Optional[str] = None
         description_started = False
-        for line in lines[2:]:
+        for line in lines[submit_idx + 1 :]:
             tmp = line.split()
             if description_started:
                 indent_length = len(indent) + len("Descr: ")
