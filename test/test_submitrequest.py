@@ -120,6 +120,25 @@ from obs_package_update.submitrequest import (
                 destination_project="SUSE:SLE-15-SP5:Update:BCI",
             ),
         ),
+        (
+            """289123  State:review     By:dancermak    When:2023-01-30T08:01:32
+        Created by: dancermak
+        submit:          openSUSE.org:devel:BCI:SLE-15-SP4/rmt-helm@4 ->    SUSE:SLE-15-SP4:Update:BCI
+        Review by Group      is accepted:  legal-auto(licensedigger)                         
+        Review by Group      is accepted:  autobuild-team(bigironman)                        
+        Review by Group      is new:       sle-release-managers                              
+        Descr: 🤖: sync package with openSUSE.org:devel:BCI:SLE-15-SP4 from OBS
+""",
+            SubmitRequest(
+                id=289123,
+                state=RequestState.REVIEW,
+                source_package="rmt-helm",
+                source_project="openSUSE.org:devel:BCI:SLE-15-SP4",
+                description="🤖: sync package with openSUSE.org:devel:BCI:SLE-15-SP4 from OBS",
+                source_revision="4",
+                destination_project="SUSE:SLE-15-SP4:Update:BCI",
+            ),
+        ),
     ],
 )
 def test_from_osc_stdout(stdout: str, submit_request: SubmitRequest):
