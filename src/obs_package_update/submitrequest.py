@@ -139,7 +139,7 @@ class SubmitRequest:
 
 
 def _submit_requests_from_osc(stdout: str) -> List[SubmitRequest]:
-    if "No results for package" in stdout:
+    if "No results for package" in stdout or "does not exist" in stdout:
         return []
 
     res: List[SubmitRequest] = []
