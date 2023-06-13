@@ -731,13 +731,13 @@ files = [
 
 [[package]]
 name = "types-aiofiles"
-version = "22.1.0.8"
+version = "23.1.0.4"
 description = "Typing stubs for aiofiles"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-aiofiles-22.1.0.8.tar.gz", hash = "sha256:841ef2a69091be3ea798b8928c96e9368f3e1e22c2899fde62120b359b03927f"},
-    {file = "types_aiofiles-22.1.0.8-py3-none-any.whl", hash = "sha256:10c733cb87f820c7b2d7ac949a7553d2704020d1359ba6a5e187b96f3037b4c0"},
+    {file = "types-aiofiles-23.1.0.4.tar.gz", hash = "sha256:89a58cd0ae93b37a22c323c22d250bd65dde6833f6c6f3c1824784e56f47109f"},
+    {file = "types_aiofiles-23.1.0.4-py3-none-any.whl", hash = "sha256:65a862f0d36e6b8e1b2df601ba7aeeb2eba8e2f9764ba9d0989bdd498ed8c857"},
 ]
 
 [[package]]
@@ -785,4 +785,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "05bfa58fff5e9acaa0c58a6e5e832cce7196cfc354d5cf94ec96489f2d0d5a7d"
+content-hash = "30e5d5cd8aef0bce9e5f067f8d7fae14e99629d224f44b033797bcd1ad5f0892"
