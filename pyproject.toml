@@ -10,7 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-aiofiles = "^22.1"
+aiofiles = "^23.1"
 
 [tool.poetry.dev-dependencies]
 Sphinx = ">=5.0"
