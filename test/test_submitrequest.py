@@ -139,6 +139,23 @@ from obs_package_update.submitrequest import (
                 destination_project="SUSE:SLE-15-SP4:Update:BCI",
             ),
         ),
+        (
+            """310990  State:review(approved) By:dirkmueller  When:2023-10-20T13:11:58
+        Created by: dirkmueller
+        submit:          home:dirkmueller:branches:SUSE:SLE-15-SP5:Update:BCI/rmt-helm@5 -> SUSE:SLE-15-SP5:Update:BCI
+        Review by Group      is accepted:  legal-auto(licensedigger)                         
+        Review by Group      is accepted:  autobuild-team(darix)                             
+        Review by Group      is new:       sle-release-managers""",
+            SubmitRequest(
+                id=310990,
+                state=RequestState.REVIEW,
+                source_package="rmt-helm",
+                source_project="home:dirkmueller:branches:SUSE:SLE-15-SP5:Update:BCI",
+                description=None,
+                source_revision="5",
+                destination_project="SUSE:SLE-15-SP5:Update:BCI",
+            ),
+        ),
     ],
 )
 def test_from_osc_stdout(stdout: str, submit_request: SubmitRequest):

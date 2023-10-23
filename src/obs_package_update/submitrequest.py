@@ -32,7 +32,7 @@ class SubmitRequest:
     id: int
 
     #: the text description set by the submission author
-    description: str
+    description: Optional[str]
 
     #: the package's source project
     source_project: str
@@ -121,9 +121,6 @@ class SubmitRequest:
 
             description_started = True
             description = " ".join(tmp[1:])
-
-        if not description:
-            raise ValueError(f"Submitrequest contains no description: {stdout}")
 
         src, rev = full_src.split("@")
         prj, pkg = src.split("/")
